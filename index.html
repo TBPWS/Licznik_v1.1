@@ -2,11 +2,12 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8">
-  <title>Tabela z arkusza Google</title>
+  <title>Tabele z arkusza Google</title>
   <style>
     table {
       border-collapse: collapse;
       font-family: Arial;
+      margin-bottom: 40px;
     }
     td, th {
       border: 1px solid #ccc;
@@ -15,32 +16,50 @@
     tr:nth-child(even) {
       background: #f7f7f7;
     }
+    h3 {
+      font-family: Arial;
+      margin-top: 30px;
+    }
   </style>
 </head>
 <body>
 
-  <input type="text" id="dataOd" placeholder="od" 
+  <input type="text" id="dataOd" placeholder="od"
          style="margin-bottom: 10px; font-size: 16px; padding: 6px;">
 
-  <input type="text" id="dataDo" placeholder="do" 
+  <input type="text" id="dataDo" placeholder="do"
          style="margin-bottom: 10px; font-size: 16px; padding: 6px;">
 
-  <table id="tabela"></table>
+  <div id="tabele"></div>
 
   <script>
     fetch("https://raw.githubusercontent.com/TBPWS/Licznik_v1.1/main/data.json")
       .then(r => r.json())
-      .then(rows => {
-        const table = document.getElementById("tabela");
+      .then(allSheets => {
+        const container = document.getElementById("tabele");
 
-        rows.forEach(row => {
-          const tr = document.createElement("tr");
-          row.forEach(cell => {
-            const td = document.createElement("td");
-            td.textContent = cell;
-            tr.appendChild(td);
+        Object.keys(allSheets).forEach(sheetName => {
+          const rows = allSheets[sheetName];
+
+          // Nagłówek z nazwą skoroszytu
+          const header = document.createElement("h3");
+          header.textContent = sheetName;
+          container.appendChild(header);
+
+          // Tabela
+          const table = document.createElement("table");
+
+          rows.forEach(row => {
+            const tr = document.createElement("tr");
+            row.forEach(cell => {
+              const td = document.createElement("td");
+              td.textContent = cell;
+              tr.appendChild(td);
+            });
+            table.appendChild(tr);
           });
-          table.appendChild(tr);
+
+          container.appendChild(table);
         });
       })
       .catch(err => {
