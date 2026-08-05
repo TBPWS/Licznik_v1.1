@@ -14,7 +14,7 @@ def main():
 
     result = sheet.values().get(
         spreadsheetId=sheet_id,
-        range="A:Z"
+        range="A:ZZZ"
     ).execute()
 
     values = result.get("values", [])
