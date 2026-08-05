@@ -2,29 +2,52 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8">
-  <title>Tabele z arkusza Google</title>
+  <title>Tabele z arkusza Google — Premium</title>
+
   <style>
-    table {
-      border-collapse: collapse;
+    body {
       font-family: Arial;
-      margin-bottom: 40px;
-      width: auto;
+      background: #0f0f0f;
+      color: #e0e0e0;
+      padding: 20px;
     }
-    td, th {
-      border: 1px solid #ccc;
-      padding: 6px 10px;
-    }
-    tr:nth-child(even) {
-      background: #f7f7f7;
-    }
-    h3 {
-      font-family: Arial;
-      margin-top: 30px;
-    }
-    #dataOd, #dataDo {
+
+    input {
       margin-bottom: 10px;
       font-size: 16px;
       padding: 6px;
+      background: #1c1c1c;
+      border: 1px solid #333;
+      color: #e0e0e0;
+      border-radius: 6px;
+    }
+
+    h3 {
+      margin-top: 40px;
+      font-size: 22px;
+      font-weight: bold;
+      padding-left: 6px;
+      border-left: 6px solid #888;
+    }
+
+    .tabela-premium {
+      border-collapse: collapse;
+      margin-bottom: 40px;
+      width: auto;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 25px rgba(0,0,0,0.5);
+    }
+
+    .tabela-premium td, 
+    .tabela-premium th {
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 8px 12px;
+      color: #fff;
+    }
+
+    .tabela-premium tr:nth-child(even) {
+      background: rgba(255,255,255,0.05);
     }
   </style>
 </head>
@@ -41,36 +64,43 @@
       .then(allSheets => {
         const container = document.getElementById("tabele");
 
-        const kolory = {
-          "Crypt": "#e3f2fd",
-          "Vault": "#e8f5e9",
-          "Hermes": "#fff3e0",
-          "Ancients": "#fce4ec",
-          "default": "#f7f7f7"
+        // PREMIUM GRADIENTY
+        const koloryPremium = {
+          "Crypt": "linear-gradient(135deg, #1e3c72, #2a5298)",
+          "Vault": "linear-gradient(135deg, #0f9b0f, #00b300)",
+          "Hermes": "linear-gradient(135deg, #ff8c00, #ffb347)",
+          "Ancients": "linear-gradient(135deg, #8e2de2, #4a00e0)",
+          "default": "linear-gradient(135deg, #333, #555)"
         };
 
         Object.keys(allSheets).forEach(sheetName => {
+
           // pomijamy niepotrzebne zakładki
           if (sheetName === "Dane") return;
-          if (sheetName === "Ranking Historia") return;
+          if (sheetName === "Ranking") return;
+          if (sheetName === "Historia") return;
 
           const rows = allSheets[sheetName];
 
+          // nagłówek
           const header = document.createElement("h3");
           header.textContent = sheetName;
           container.appendChild(header);
 
+          // tabela
           const table = document.createElement("table");
+          table.className = "tabela-premium";
 
-          // wybór koloru na podstawie nazwy zakładki
-          let kolor = kolory.default;
-          if (sheetName.includes("Crypt")) kolor = kolory.Crypt;
-          if (sheetName.includes("Vault")) kolor = kolory.Vault;
-          if (sheetName.includes("Hermes")) kolor = kolory.Hermes;
-          if (sheetName.includes("Ancients")) kolor = kolory.Ancients;
+          // wybór gradientu
+          let gradient = koloryPremium.default;
+          if (sheetName.includes("Crypt")) gradient = koloryPremium.Crypt;
+          if (sheetName.includes("Vault")) gradient = koloryPremium.Vault;
+          if (sheetName.includes("Hermes")) gradient = koloryPremium.Hermes;
+          if (sheetName.includes("Ancients")) gradient = koloryPremium.Ancients;
 
-          table.style.backgroundColor = kolor;
+          table.style.background = gradient;
 
+          // generowanie wierszy
           rows.forEach(row => {
             const tr = document.createElement("tr");
             row.forEach(cell => {
