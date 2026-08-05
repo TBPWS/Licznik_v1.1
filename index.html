@@ -8,6 +8,7 @@
       border-collapse: collapse;
       font-family: Arial;
       margin-bottom: 40px;
+      width: auto;
     }
     td, th {
       border: 1px solid #ccc;
@@ -20,89 +21,56 @@
       font-family: Arial;
       margin-top: 30px;
     }
+    #dataOd, #dataDo {
+      margin-bottom: 10px;
+      font-size: 16px;
+      padding: 6px;
+    }
   </style>
 </head>
 <body>
 
-  <input type="text" id="dataOd" placeholder="od"
-         style="margin-bottom: 10px; font-size: 16px; padding: 6px;">
-
-  <input type="text" id="dataDo" placeholder="do"
-         style="margin-bottom: 10px; font-size: 16px; padding: 6px;">
+  <input type="text" id="dataOd" placeholder="od">
+  <input type="text" id="dataDo" placeholder="do">
 
   <div id="tabele"></div>
 
-<script>
-  fetch("https://raw.githubusercontent.com/TBPWS/Licznik_v1.1/main/data.json")
-    .then(r => r.json())
-    .then(allSheets => {
-      const container = document.getElementById("tabele");
+  <script>
+    fetch("https://raw.githubusercontent.com/TBPWS/Licznik_v1.1/main/data.json")
+      .then(r => r.json())
+      .then(allSheets => {
+        const container = document.getElementById("tabele");
 
-      const kolory = {
-        "Crypt": "#e3f2fd",
-        "Vault": "#e8f5e9",
-        "Hermes": "#fff3e0",
-        "Ancients": "#fce4ec",
-        "default": "#f7f7f7"
-      };
-
-      Object.keys(allSheets).forEach(sheetName => {
-
-        if (sheetName === "Dane") return;
-        if (sheetName === "Ranking") return;
-        if (sheetName === "Historia") return;
-
-        const rows = allSheets[sheetName];
-
-        const header = document.createElement("h3");
-        header.textContent = sheetName;
-        container.appendChild(header);
-
-        const table = document.createElement("table");
-
-        // wybór koloru na podstawie nazwy zakładki
-        let kolor = kolory.default;
-        if (sheetName.includes("Crypt")) kolor = kolory.Crypt;
-        if (sheetName.includes("Vault")) kolor = kolory.Vault;
-        if (sheetName.includes("Hermes")) kolor = kolory.Hermes;
-        if (sheetName.includes("Ancients")) kolor = kolory.Ancients;
-
-        table.style.backgroundColor = kolor;
-
-        rows.forEach(row => {
-          const tr = document.createElement("tr");
-          row.forEach(cell => {
-            const td = document.createElement("td");
-            td.textContent = cell;
-            tr.appendChild(td);
-          });
-          table.appendChild(tr);
-        });
-
-        container.appendChild(table);
-      });
-    })
-    .catch(err => {
-      document.body.innerHTML += "<p>Błąd wczytywania danych.</p>";
-      console.error(err);
-    });
-</script>
-
+        const kolory = {
+          "Crypt": "#e3f2fd",
+          "Vault": "#e8f5e9",
+          "Hermes": "#fff3e0",
+          "Ancients": "#fce4ec",
+          "default": "#f7f7f7"
+        };
 
         Object.keys(allSheets).forEach(sheetName => {
+          // pomijamy niepotrzebne zakładki
+          if (sheetName === "Dane") return;
+          if (sheetName === "Ranking") return;
+          if (sheetName === "Historia") return;
 
-  // pomiń niechciane zakładki
-  if (sheetName === "Dane") return;
-  if (sheetName === "Ranking Historia") return;
           const rows = allSheets[sheetName];
 
-          // Nagłówek z nazwą skoroszytu
           const header = document.createElement("h3");
           header.textContent = sheetName;
           container.appendChild(header);
 
-          // Tabela
           const table = document.createElement("table");
+
+          // wybór koloru na podstawie nazwy zakładki
+          let kolor = kolory.default;
+          if (sheetName.includes("Crypt")) kolor = kolory.Crypt;
+          if (sheetName.includes("Vault")) kolor = kolory.Vault;
+          if (sheetName.includes("Hermes")) kolor = kolory.Hermes;
+          if (sheetName.includes("Ancients")) kolor = kolory.Ancients;
+
+          table.style.backgroundColor = kolor;
 
           rows.forEach(row => {
             const tr = document.createElement("tr");
