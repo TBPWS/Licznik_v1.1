@@ -39,6 +39,7 @@
         const container = document.getElementById("tabele");
 
         Object.keys(allSheets).forEach(sheetName => {
+  if (sheetName === "Dane") return; // pomiń zakładkę Dane
           const rows = allSheets[sheetName];
 
           // Nagłówek z nazwą skoroszytu
