@@ -2,24 +2,45 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8">
-  <title>Licznik v1.1</title>
+  <title>Tabela z arkusza Google</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      font-family: Arial;
+    }
+    td, th {
+      border: 1px solid #ccc;
+      padding: 6px 10px;
+    }
+    tr:nth-child(even) {
+      background: #f7f7f7;
+    }
+  </style>
 </head>
 <body>
-  <h1>Licznik v1.1</h1>
-  <p>Strona działa — dane z workflow:</p>
-
-  <pre id="data"></pre>
+  <h2>Tabela z arkusza Google</h2>
+  <table id="tabela"></table>
 
   <script>
-    fetch('data.json')
+    fetch("https://raw.githubusercontent.com/TBPW5/Licznik_v1.1/main/data.json")
       .then(r => r.json())
-      .then(data => {
-        document.getElementById('data').textContent = JSON.stringify(data, null, 2);
+      .then(rows => {
+        const table = document.getElementById("tabela");
+
+        rows.forEach(row => {
+          const tr = document.createElement("tr");
+          row.forEach(cell => {
+            const td = document.createElement("td");
+            td.textContent = cell;
+            tr.appendChild(td);
+          });
+          table.appendChild(tr);
+        });
       })
       .catch(err => {
-        document.getElementById('data').textContent = 'Brak danych lub błąd.';
+        document.body.innerHTML += "<p>Błąd wczytywania danych.</p>";
+        console.error(err);
       });
   </script>
 </body>
 </html>
-
