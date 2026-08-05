@@ -1,20 +1,16 @@
-name: Update Dashboard
+name: Update Sheet
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
   schedule:
-    - cron: "*/30 * * * *"
+    - cron: "0 * * * *"
 
 jobs:
   update:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -22,7 +18,7 @@ jobs:
           python-version: "3.10"
 
       - name: Install dependencies
-        run: pip install google-api-python-client google-auth
+        run: pip install google-api-python-client google-auth google-auth-httplib2 google-auth-oauthlib
 
       - name: Export sheet
         env:
@@ -30,14 +26,10 @@ jobs:
           SHEET_ID: ${{ secrets.SHEET_ID }}
         run: python scripts/export_sheet.py
 
-      - name: Generate dashboard JSON
-        run: python scripts/generate_dashboard.py
-
       - name: Commit changes
         run: |
           git config user.name "GitHub Actions Bot"
           git config user.email "actions@github.com"
-          git add data.json scripts/history.json
-          git commit -m "Auto update dashboard" || echo "No changes"
+          git add data.json
+          git commit -m "Auto update sheet" || echo "No changes"
           git push
-
