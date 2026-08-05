@@ -1,1 +1,25 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Licznik v1.1</title>
+</head>
+<body>
+  <h1>Licznik v1.1</h1>
+  <p>Strona działa — dane z workflow:</p>
+
+  <pre id="data"></pre>
+
+  <script>
+    fetch('data.json')
+      .then(r => r.json())
+      .then(data => {
+        document.getElementById('data').textContent = JSON.stringify(data, null, 2);
+      })
+      .catch(err => {
+        document.getElementById('data').textContent = 'Brak danych lub błąd.';
+      });
+  </script>
+</body>
+</html>
 
