@@ -50,10 +50,17 @@
       border-color: #777;
     }
 
+    /* KONTENER PRZEWIJANIA */
+    .table-scroll {
+      max-height: 500px;
+      overflow-y: auto;
+      overflow-x: auto;
+      border-radius: 10px;
+    }
+
     /* TABELA PREMIUM */
     .tabela-premium {
       border-collapse: collapse;
-      margin-bottom: 40px;
       width: auto;
       border-radius: 10px;
       overflow: hidden;
@@ -70,6 +77,15 @@
 
     .tabela-premium tr:nth-child(even) {
       background: rgba(255,255,255,0.05);
+    }
+
+    /* ZAMROŻONY NAGŁÓWEK */
+    .tabela-premium th {
+      position: sticky;
+      top: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      z-index: 5;
     }
 
     @keyframes fadeIn {
@@ -98,6 +114,7 @@
         const container = document.getElementById("tabele");
         const tabs = document.getElementById("tabs");
 
+        /* PREMIUM GRADIENTY */
         const koloryPremium = {
           "Crypt": "linear-gradient(135deg, #1e3c72, #2a5298)",
           "Vault": "linear-gradient(135deg, #0f9b0f, #00b300)",
@@ -108,8 +125,10 @@
 
         Object.keys(allSheets).forEach(sheetName => {
 
+          /* POMIJAMY NIEPOTRZEBNE ZAKŁADKI */
           if (sheetName === "Dane") return;
-          if (sheetName === "Ranking Historia") return;
+          if (sheetName === "Ranking") return;
+          if (sheetName === "Historia") return;
 
           const rows = allSheets[sheetName];
 
@@ -120,11 +139,15 @@
           btn.dataset.tab = sheetName;
           tabs.appendChild(btn);
 
-          /* TWORZENIE TABELI */
-          const table = document.createElement("table");
-          table.className = "tabela-premium hidden";
-          table.id = "tab_" + sheetName;
+          /* TWORZENIE KONTENERA + TABELI */
+          const wrapper = document.createElement("div");
+          wrapper.className = "table-scroll hidden";
+          wrapper.id = "tab_" + sheetName;
 
+          const table = document.createElement("table");
+          table.className = "tabela-premium";
+
+          /* WYBÓR GRADIENTU */
           let gradient = koloryPremium.default;
           if (sheetName.includes("Crypt")) gradient = koloryPremium.Crypt;
           if (sheetName.includes("Vault")) gradient = koloryPremium.Vault;
@@ -133,6 +156,7 @@
 
           table.style.background = gradient;
 
+          /* GENEROWANIE WIERSZY */
           rows.forEach(row => {
             const tr = document.createElement("tr");
             row.forEach(cell => {
@@ -143,7 +167,8 @@
             table.appendChild(tr);
           });
 
-          container.appendChild(table);
+          wrapper.appendChild(table);
+          container.appendChild(wrapper);
         });
 
         /* LOGIKA PRZEŁĄCZANIA ZAKŁADEK */
@@ -153,7 +178,7 @@
             document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
 
-            document.querySelectorAll(".tabela-premium").forEach(t => t.classList.add("hidden"));
+            document.querySelectorAll(".table-scroll").forEach(t => t.classList.add("hidden"));
 
             const activeTable = document.getElementById("tab_" + btn.dataset.tab);
             activeTable.classList.remove("hidden");
