@@ -47,12 +47,13 @@
     }
 
     .table-scroll {
-      max-height: 800px;
-      overflow: auto;
-      border-radius: 10px;
-      margin-bottom: 40px;
-      -webkit-overflow-scrolling: touch;
-    }
+  height: 80vh;              /* stała wysokość względem ekranu */
+  overflow: auto;            /* pion + poziom w środku */
+  border-radius: 10px;
+  margin-bottom: 20px;
+  -webkit-overflow-scrolling: touch;
+}
+
 
     .tabela-premium {
       border-collapse: collapse;
@@ -94,28 +95,26 @@
 
     /* ⭐ SAFE MODE dla Podsumowanie: dwie tabele obok siebie */
     .podsumowanie-wrapper {
-      display: flex;
-      gap: 0;
-      max-height: 800px;
-    }
+  display: flex;
+  gap: 0;
+  height: 80vh;        /* ← Android wymaga twardej wysokości */
+}
 
-    .podsumowanie-left,
-    .podsumowanie-right {
-      -webkit-overflow-scrolling: touch;
-    }
+.podsumowanie-left {
+  width: 320px;
+  height: 100%;        /* ← dziedziczy 80vh */
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
 
-    .podsumowanie-left {
-      width: 320px;          /* 3 kolumny po ~100px */
-      overflow-y: auto;
-      overflow-x: hidden;
-      border-radius: 10px 0 0 10px;
-    }
+.podsumowanie-right {
+  flex: 1;
+  height: 100%;        /* ← dziedziczy 80vh */
+  overflow: auto;      /* ← pion + poziom */
+  -webkit-overflow-scrolling: touch;
+}
 
-    .podsumowanie-right {
-      flex: 1;
-      overflow: auto;        /* pion + poziom */
-      border-radius: 0 10px 10px 0;
-    }
 
     .podsumowanie-left .tabela-premium,
     .podsumowanie-right .tabela-premium {
