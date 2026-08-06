@@ -115,22 +115,22 @@
     /* ⭐ KOLOROWANIE POZOSTAŁYCH KOLUMN W PODSUMOWANIE ⭐ */
     #tab_Podsumowanie td.crypt,
     #tab_Podsumowanie th.crypt {
-      background: #1e3c72;
+      background: #1e3c72 !important;
     }
 
     #tab_Podsumowanie td.vault,
     #tab_Podsumowanie th.vault {
-      background: #0f9b0f;
+      background: #0f9b0f !important;
     }
 
     #tab_Podsumowanie td.hermes,
     #tab_Podsumowanie th.hermes {
-      background: #ff8c00;
+      background: #ff8c00 !important;
     }
 
     #tab_Podsumowanie td.ancients,
     #tab_Podsumowanie th.ancients {
-      background: #8e2de2;
+      background: #8e2de2 !important;
     }
 
     @keyframes fadeIn {
@@ -159,17 +159,13 @@
         const container = document.getElementById("tabele");
         const tabs = document.getElementById("tabs");
 
-        const koloryPremium = {
-          "Crypt": "crypt",
-          "Vault": "vault",
-          "Hermes": "hermes",
-          "Ancients": "ancients"
-        };
-
         Object.keys(allSheets).forEach(sheetName => {
 
+          // Ukrywamy każdy arkusz, który ma w nazwie "ranking"
+          if (sheetName.toLowerCase().includes("ranking")) return;
+
+          // Ukrywamy Dane
           if (sheetName === "Dane") return;
-          if (sheetName === "Ranking Historia") return;
 
           const rows = allSheets[sheetName];
 
@@ -193,14 +189,15 @@
               const td = document.createElement(index === 0 ? "th" : "td");
               td.textContent = cell;
 
-              /* ⭐ KOLOROWANIE KOLUMN W PODSUMOWANIE ⭐ */
+              // ⭐ KOLOROWANIE KOLUMN W "Podsumowanie" ⭐
               if (sheetName === "Podsumowanie" && colIndex >= 3) {
-                const header = rows[0][colIndex];
+                const headerRaw = rows[0][colIndex] || "";
+                const header = String(headerRaw).toLowerCase();
 
-                if (header.includes("Crypt")) td.classList.add("crypt");
-                if (header.includes("Vault")) td.classList.add("vault");
-                if (header.includes("Hermes")) td.classList.add("hermes");
-                if (header.includes("Ancients")) td.classList.add("ancients");
+                if (header.includes("crypt")) td.classList.add("crypt");
+                else if (header.includes("vault")) td.classList.add("vault");
+                else if (header.includes("hermes")) td.classList.add("hermes");
+                else if (header.includes("ancients")) td.classList.add("ancients");
               }
 
               tr.appendChild(td);
