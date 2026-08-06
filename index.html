@@ -89,6 +89,35 @@
       background: rgba(0,0,0,0.6);
       backdrop-filter: blur(4px);
       z-index: 5;
+
+      /* Zamrożenie pierwszych 3 kolumn tylko w zakładce Podsumowanie */
+#tab_Podsumowanie table td:nth-child(1),
+#tab_Podsumowanie table th:nth-child(1) {
+  position: sticky;
+  left: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  z-index: 7;
+}
+
+#tab_Podsumowanie table td:nth-child(2),
+#tab_Podsumowanie table th:nth-child(2) {
+  position: sticky;
+  left: 140px; /* szerokość kolumny 1 */
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  z-index: 7;
+}
+
+#tab_Podsumowanie table td:nth-child(3),
+#tab_Podsumowanie table th:nth-child(3) {
+  position: sticky;
+  left: 280px; /* szerokość kolumny 2 */
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  z-index: 7;
+}
+
     }
 
     @keyframes fadeIn {
