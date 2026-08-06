@@ -2,7 +2,11 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8">
-  <title>Tabele z arkusza Google — Premium Tabs</title>
+
+  <!-- ⭐ Android Ultra Viewport -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <title>Tabele — Android Ultra</title>
 
   <style>
     body {
@@ -40,29 +44,28 @@
       font-weight: bold;
     }
 
-    .tab-btn:hover {
-      background: #333;
-    }
-
     .tab-btn.active {
       background: #444;
       border-color: #777;
     }
 
+    /* ⭐ Android Ultra Scroll */
     .table-scroll {
       max-height: 800px;
       overflow-y: auto;
       overflow-x: auto;
       border-radius: 10px;
       margin-bottom: 40px;
+      -webkit-overflow-scrolling: touch;
     }
 
+    /* ⭐ Android Ultra Table */
     .tabela-premium {
       border-collapse: collapse;
       width: 100%;
       border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 0 25px rgba(0,0,0,0.5);
+      overflow: visible; /* Android fix */
+      box-shadow: 0 0 10px rgba(0,0,0,0.4);
       animation: fadeIn 0.4s ease;
     }
 
@@ -73,26 +76,28 @@
       color: #fff;
       white-space: nowrap;
       font-size: 15px;
+      min-width: 110px; /* Android fix */
+      will-change: transform; /* GPU boost */
     }
 
     .tabela-premium tr:nth-child(even) {
       background: rgba(255,255,255,0.05);
     }
 
+    /* ⭐ Sticky nagłówki */
     .tabela-premium th {
       position: sticky;
       top: 0;
-      background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(4px);
+      background-color: #000; /* Android fix */
       z-index: 5;
     }
 
-    /* ⭐ PIERWSZE 3 KOLUMNY — STICKY, BEZ KOLORÓW ⭐ */
+    /* ⭐ Sticky pierwsze 3 kolumny — BEZ kolorów */
     #tab_Podsumowanie td:nth-child(1),
     #tab_Podsumowanie th:nth-child(1) {
       position: sticky;
       left: 0;
-      background: rgba(20,20,20,0.85);
+      background-color: #141414;
       z-index: 7;
     }
 
@@ -100,7 +105,7 @@
     #tab_Podsumowanie th:nth-child(2) {
       position: sticky;
       left: 160px;
-      background: rgba(20,20,20,0.85);
+      background-color: #141414;
       z-index: 7;
     }
 
@@ -108,29 +113,29 @@
     #tab_Podsumowanie th:nth-child(3) {
       position: sticky;
       left: 320px;
-      background: rgba(20,20,20,0.85);
+      background-color: #141414;
       z-index: 7;
     }
 
-    /* ⭐ KOLOROWANIE POZOSTAŁYCH KOLUMN W PODSUMOWANIE ⭐ */
+    /* ⭐ Kolorowanie pozostałych kolumn */
     #tab_Podsumowanie td.crypt,
     #tab_Podsumowanie th.crypt {
-      background: #1e3c72 !important;
+      background-color: #1e3c72 !important;
     }
 
     #tab_Podsumowanie td.vault,
     #tab_Podsumowanie th.vault {
-      background: #0f9b0f !important;
+      background-color: #0f9b0f !important;
     }
 
     #tab_Podsumowanie td.hermes,
     #tab_Podsumowanie th.hermes {
-      background: #ff8c00 !important;
+      background-color: #ff8c00 !important;
     }
 
     #tab_Podsumowanie td.ancients,
     #tab_Podsumowanie th.ancients {
-      background: #8e2de2 !important;
+      background-color: #8e2de2 !important;
     }
 
     @keyframes fadeIn {
@@ -161,10 +166,7 @@
 
         Object.keys(allSheets).forEach(sheetName => {
 
-          // Ukrywamy każdy arkusz, który ma w nazwie "historia"
-          if (sheetName.toLowerCase().includes("historia")) return;
-
-          // Ukrywamy Dane
+          if (sheetName.toLowerCase().includes("ranking")) return;
           if (sheetName === "Dane") return;
 
           const rows = allSheets[sheetName];
@@ -189,10 +191,8 @@
               const td = document.createElement(index === 0 ? "th" : "td");
               td.textContent = cell;
 
-              // ⭐ KOLOROWANIE KOLUMN W "Podsumowanie" ⭐
               if (sheetName === "Podsumowanie" && colIndex >= 3) {
-                const headerRaw = rows[0][colIndex] || "";
-                const header = String(headerRaw).toLowerCase();
+                const header = String(rows[0][colIndex]).toLowerCase();
 
                 if (header.includes("crypt")) td.classList.add("crypt");
                 else if (header.includes("vault")) td.classList.add("vault");
@@ -225,10 +225,6 @@
 
         const firstBtn = document.querySelector(".tab-btn");
         if (firstBtn) firstBtn.click();
-      })
-      .catch(err => {
-        document.body.innerHTML += "<p>Błąd wczytywania danych.</p>";
-        console.error(err);
       });
   </script>
 
