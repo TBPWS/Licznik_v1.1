@@ -2,11 +2,8 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8">
-
-  <!-- ⭐ Android Ultra Viewport -->
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-
-  <title>Tabele — Android Ultra</title>
+  <title>Tabele — SAFE MODE Android</title>
 
   <style>
     body {
@@ -49,93 +46,45 @@
       border-color: #777;
     }
 
-    /* ⭐ Android Ultra Scroll */
     .table-scroll {
       max-height: 800px;
-      overflow-y: auto;
-      overflow-x: auto;
+      overflow: auto;
       border-radius: 10px;
       margin-bottom: 40px;
       -webkit-overflow-scrolling: touch;
     }
 
-    /* ⭐ Android Ultra Table */
     .tabela-premium {
       border-collapse: collapse;
       width: 100%;
       border-radius: 10px;
-      overflow: visible; /* Android fix */
       box-shadow: 0 0 10px rgba(0,0,0,0.4);
       animation: fadeIn 0.4s ease;
     }
 
-    .tabela-premium td, 
+    .tabela-premium td,
     .tabela-premium th {
       border: 1px solid rgba(255,255,255,0.1);
-      padding: 10px 14px;
+      padding: 8px 10px;
       color: #fff;
       white-space: nowrap;
-      font-size: 15px;
-      min-width: 110px; /* Android fix */
-      will-change: transform; /* GPU boost */
+      font-size: 14px;
+      min-width: 90px;
     }
 
     .tabela-premium tr:nth-child(even) {
       background: rgba(255,255,255,0.05);
     }
 
-    /* ⭐ Sticky nagłówki */
     .tabela-premium th {
       position: sticky;
       top: 0;
-      background-color: #000; /* Android fix */
+      background-color: #000;
       z-index: 5;
     }
 
-    /* ⭐ Sticky pierwsze 3 kolumny — BEZ kolorów */
-    #tab_Podsumowanie td:nth-child(1),
-    #tab_Podsumowanie th:nth-child(1) {
-      position: sticky;
-      left: 0;
-      background-color: #141414;
-      z-index: 7;
-    }
-
-    #tab_Podsumowanie td:nth-child(2),
-    #tab_Podsumowanie th:nth-child(2) {
-      position: sticky;
-      left: 160px;
-      background-color: #141414;
-      z-index: 7;
-    }
-
-    #tab_Podsumowanie td:nth-child(3),
-    #tab_Podsumowanie th:nth-child(3) {
-      position: sticky;
-      left: 320px;
-      background-color: #141414;
-      z-index: 7;
-    }
-
-    /* ⭐ Kolorowanie pozostałych kolumn */
-    #tab_Podsumowanie td.crypt,
-    #tab_Podsumowanie th.crypt {
-      background-color: #1e3c72 !important;
-    }
-
-    #tab_Podsumowanie td.vault,
-    #tab_Podsumowanie th.vault {
-      background-color: #0f9b0f !important;
-    }
-
-    #tab_Podsumowanie td.hermes,
-    #tab_Podsumowanie th.hermes {
-      background-color: #ff8c00 !important;
-    }
-
-    #tab_Podsumowanie td.ancients,
-    #tab_Podsumowanie th.ancients {
-      background-color: #8e2de2 !important;
+    .hidden {
+      display: none;
     }
 
     @keyframes fadeIn {
@@ -143,8 +92,61 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .hidden {
-      display: none;
+    /* ⭐ SAFE MODE dla Podsumowanie: dwie tabele obok siebie */
+    .podsumowanie-wrapper {
+      display: flex;
+      gap: 0;
+      max-height: 800px;
+    }
+
+    .podsumowanie-left,
+    .podsumowanie-right {
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .podsumowanie-left {
+      width: 320px;          /* 3 kolumny po ~100px */
+      overflow-y: auto;
+      overflow-x: hidden;
+      border-radius: 10px 0 0 10px;
+    }
+
+    .podsumowanie-right {
+      flex: 1;
+      overflow: auto;        /* pion + poziom */
+      border-radius: 0 10px 10px 0;
+    }
+
+    .podsumowanie-left .tabela-premium,
+    .podsumowanie-right .tabela-premium {
+      box-shadow: none;
+    }
+
+    /* pierwsze 3 kolumny w lewej tabeli – neutralne tło */
+    .podsumowanie-left th,
+    .podsumowanie-left td {
+      background-color: #141414;
+    }
+
+    /* kolorowanie kolumn po prawej */
+    .podsumowanie-right td.crypt,
+    .podsumowanie-right th.crypt {
+      background-color: #1e3c72 !important;
+    }
+
+    .podsumowanie-right td.vault,
+    .podsumowanie-right th.vault {
+      background-color: #0f9b0f !important;
+    }
+
+    .podsumowanie-right td.hermes,
+    .podsumowanie-right th.hermes {
+      background-color: #ff8c00 !important;
+    }
+
+    .podsumowanie-right td.ancients,
+    .podsumowanie-right th.ancients {
+      background-color: #8e2de2 !important;
     }
   </style>
 </head>
@@ -154,7 +156,6 @@
   <input type="text" id="dataDo" placeholder="do">
 
   <div class="tabs" id="tabs"></div>
-
   <div id="tabele"></div>
 
   <script>
@@ -166,7 +167,8 @@
 
         Object.keys(allSheets).forEach(sheetName => {
 
-          if (sheetName.toLowerCase().includes("ranking")) return;
+          // ukrywamy arkusze z "ranking" w nazwie oraz "Dane"
+          if (sheetName.toLowerCase().includes("historia")) return;
           if (sheetName === "Dane") return;
 
           const rows = allSheets[sheetName];
@@ -177,49 +179,109 @@
           btn.dataset.tab = sheetName;
           tabs.appendChild(btn);
 
-          const wrapper = document.createElement("div");
-          wrapper.className = "table-scroll hidden";
-          wrapper.id = "tab_" + sheetName;
+          let wrapper;
 
-          const table = document.createElement("table");
-          table.className = "tabela-premium";
+          if (sheetName === "Podsumowanie") {
+            // ⭐ SAFE MODE: dwa kontenery obok siebie
+            wrapper = document.createElement("div");
+            wrapper.className = "podsumowanie-wrapper hidden";
+            wrapper.id = "tab_" + sheetName;
 
-          rows.forEach((row, index) => {
-            const tr = document.createElement("tr");
+            const leftScroll = document.createElement("div");
+            leftScroll.className = "podsumowanie-left";
 
-            row.forEach((cell, colIndex) => {
-              const td = document.createElement(index === 0 ? "th" : "td");
-              td.textContent = cell;
+            const rightScroll = document.createElement("div");
+            rightScroll.className = "podsumowanie-right";
 
-              if (sheetName === "Podsumowanie" && colIndex >= 3) {
-                const header = String(rows[0][colIndex]).toLowerCase();
+            const leftTable = document.createElement("table");
+            leftTable.className = "tabela-premium";
 
-                if (header.includes("crypt")) td.classList.add("crypt");
-                else if (header.includes("vault")) td.classList.add("vault");
-                else if (header.includes("hermes")) td.classList.add("hermes");
-                else if (header.includes("ancients")) td.classList.add("ancients");
-              }
+            const rightTable = document.createElement("table");
+            rightTable.className = "tabela-premium";
 
-              tr.appendChild(td);
+            rows.forEach((row, rowIndex) => {
+              const trLeft = document.createElement("tr");
+              const trRight = document.createElement("tr");
+
+              row.forEach((cell, colIndex) => {
+                const cellTag = rowIndex === 0 ? "th" : "td";
+                const td = document.createElement(cellTag);
+                td.textContent = cell;
+
+                if (colIndex < 3) {
+                  trLeft.appendChild(td);
+                } else {
+                  // kolorowanie po nagłówku
+                  if (rowIndex === 0) {
+                    const header = String(cell).toLowerCase();
+                    if (header.includes("crypt")) td.classList.add("crypt");
+                    else if (header.includes("vault")) td.classList.add("vault");
+                    else if (header.includes("hermes")) td.classList.add("hermes");
+                    else if (header.includes("ancients")) td.classList.add("ancients");
+                  } else {
+                    const header = String(rows[0][colIndex]).toLowerCase();
+                    if (header.includes("crypt")) td.classList.add("crypt");
+                    else if (header.includes("vault")) td.classList.add("vault");
+                    else if (header.includes("hermes")) td.classList.add("hermes");
+                    else if (header.includes("ancients")) td.classList.add("ancients");
+                  }
+                  trRight.appendChild(td);
+                }
+              });
+
+              leftTable.appendChild(trLeft);
+              rightTable.appendChild(trRight);
             });
 
-            table.appendChild(tr);
-          });
+            leftScroll.appendChild(leftTable);
+            rightScroll.appendChild(rightTable);
+            wrapper.appendChild(leftScroll);
+            wrapper.appendChild(rightScroll);
+            container.appendChild(wrapper);
 
-          wrapper.appendChild(table);
-          container.appendChild(wrapper);
+            // synchronizacja przewijania pionowego
+            rightScroll.addEventListener("scroll", () => {
+              leftScroll.scrollTop = rightScroll.scrollTop;
+            });
+            leftScroll.addEventListener("scroll", () => {
+              rightScroll.scrollTop = leftScroll.scrollTop;
+            });
+
+          } else {
+            // zwykłe tabele dla innych zakładek
+            wrapper = document.createElement("div");
+            wrapper.className = "table-scroll hidden";
+            wrapper.id = "tab_" + sheetName;
+
+            const table = document.createElement("table");
+            table.className = "tabela-premium";
+
+            rows.forEach((row, index) => {
+              const tr = document.createElement("tr");
+              row.forEach(cell => {
+                const td = document.createElement(index === 0 ? "th" : "td");
+                td.textContent = cell;
+                tr.appendChild(td);
+              });
+              table.appendChild(tr);
+            });
+
+            wrapper.appendChild(table);
+            container.appendChild(wrapper);
+          }
         });
 
+        // przełączanie zakładek
         document.querySelectorAll(".tab-btn").forEach(btn => {
           btn.addEventListener("click", () => {
-
             document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
 
-            document.querySelectorAll(".table-scroll").forEach(t => t.classList.add("hidden"));
+            document.querySelectorAll(".table-scroll, .podsumowanie-wrapper")
+              .forEach(t => t.classList.add("hidden"));
 
             const activeTable = document.getElementById("tab_" + btn.dataset.tab);
-            activeTable.classList.remove("hidden");
+            if (activeTable) activeTable.classList.remove("hidden");
           });
         });
 
