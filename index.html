@@ -22,7 +22,6 @@
       border-radius: 6px;
     }
 
-    /* PANEL ZAKŁADEK */
     .tabs {
       display: flex;
       gap: 10px;
@@ -50,7 +49,6 @@
       border-color: #777;
     }
 
-    /* KONTENER PRZEWIJANIA — POWIĘKSZONY */
     .table-scroll {
       max-height: 800px;
       overflow-y: auto;
@@ -59,7 +57,6 @@
       margin-bottom: 40px;
     }
 
-    /* TABELA PREMIUM — SZEROKA */
     .tabela-premium {
       border-collapse: collapse;
       width: 100%;
@@ -82,7 +79,6 @@
       background: rgba(255,255,255,0.05);
     }
 
-    /* ZAMROŻONY NAGŁÓWEK */
     .tabela-premium th {
       position: sticky;
       top: 0;
@@ -91,32 +87,50 @@
       z-index: 5;
     }
 
-    /* ⭐ ZAMROŻENIE PIERWSZYCH 3 KOLUMN TYLKO W "Podsumowanie" ⭐ */
+    /* ⭐ PIERWSZE 3 KOLUMNY — STICKY, BEZ KOLORÓW ⭐ */
     #tab_Podsumowanie td:nth-child(1),
     #tab_Podsumowanie th:nth-child(1) {
       position: sticky;
       left: 0;
-      background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(4px);
+      background: rgba(20,20,20,0.85);
       z-index: 7;
     }
 
     #tab_Podsumowanie td:nth-child(2),
     #tab_Podsumowanie th:nth-child(2) {
       position: sticky;
-      left: 140px;
-      background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(4px);
+      left: 160px;
+      background: rgba(20,20,20,0.85);
       z-index: 7;
     }
 
     #tab_Podsumowanie td:nth-child(3),
     #tab_Podsumowanie th:nth-child(3) {
       position: sticky;
-      left: 280px;
-      background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(4px);
+      left: 320px;
+      background: rgba(20,20,20,0.85);
       z-index: 7;
+    }
+
+    /* ⭐ KOLOROWANIE POZOSTAŁYCH KOLUMN W PODSUMOWANIE ⭐ */
+    #tab_Podsumowanie td.crypt,
+    #tab_Podsumowanie th.crypt {
+      background: #1e3c72;
+    }
+
+    #tab_Podsumowanie td.vault,
+    #tab_Podsumowanie th.vault {
+      background: #0f9b0f;
+    }
+
+    #tab_Podsumowanie td.hermes,
+    #tab_Podsumowanie th.hermes {
+      background: #ff8c00;
+    }
+
+    #tab_Podsumowanie td.ancients,
+    #tab_Podsumowanie th.ancients {
+      background: #8e2de2;
     }
 
     @keyframes fadeIn {
@@ -146,17 +160,16 @@
         const tabs = document.getElementById("tabs");
 
         const koloryPremium = {
-          "Crypt": "linear-gradient(135deg, #1e3c72, #2a5298)",
-          "Vault": "linear-gradient(135deg, #0f9b0f, #00b300)",
-          "Hermes": "linear-gradient(135deg, #ff8c00, #ffb347)",
-          "Ancients": "linear-gradient(135deg, #8e2de2, #4a00e0)",
-          "default": "linear-gradient(135deg, #333, #555)"
+          "Crypt": "crypt",
+          "Vault": "vault",
+          "Hermes": "hermes",
+          "Ancients": "ancients"
         };
 
         Object.keys(allSheets).forEach(sheetName => {
 
           if (sheetName === "Dane") return;
-          if (sheetName === "Ranking") return;
+          if (sheetName === "Ranking Historia") return;
 
           const rows = allSheets[sheetName];
 
@@ -173,20 +186,23 @@
           const table = document.createElement("table");
           table.className = "tabela-premium";
 
-          let gradient = koloryPremium.default;
-          if (sheetName.includes("Crypt")) gradient = koloryPremium.Crypt;
-          if (sheetName.includes("Vault")) gradient = koloryPremium.Vault;
-          if (sheetName.includes("Hermes")) gradient = koloryPremium.Hermes;
-          if (sheetName.includes("Ancients")) gradient = koloryPremium.Ancients;
-
-          table.style.background = gradient;
-
           rows.forEach((row, index) => {
             const tr = document.createElement("tr");
 
-            row.forEach(cell => {
+            row.forEach((cell, colIndex) => {
               const td = document.createElement(index === 0 ? "th" : "td");
               td.textContent = cell;
+
+              /* ⭐ KOLOROWANIE KOLUMN W PODSUMOWANIE ⭐ */
+              if (sheetName === "Podsumowanie" && colIndex >= 3) {
+                const header = rows[0][colIndex];
+
+                if (header.includes("Crypt")) td.classList.add("crypt");
+                if (header.includes("Vault")) td.classList.add("vault");
+                if (header.includes("Hermes")) td.classList.add("hermes");
+                if (header.includes("Ancients")) td.classList.add("ancients");
+              }
+
               tr.appendChild(td);
             });
 
