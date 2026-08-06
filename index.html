@@ -50,19 +50,19 @@
       border-color: #777;
     }
 
-    /* KONTENER PRZEWIJANIA */
+    /* KONTENER PRZEWIJANIA — POWIĘKSZONY */
     .table-scroll {
-      max-height: 500px;
+      max-height: 800px;     /* POWIĘKSZONA WYSOKOŚĆ */
       overflow-y: auto;
       overflow-x: auto;
       border-radius: 10px;
       margin-bottom: 40px;
     }
 
-    /* TABELA PREMIUM */
+    /* TABELA PREMIUM — SZEROKA */
     .tabela-premium {
       border-collapse: collapse;
-      width: auto;
+      width: 100%;           /* PEŁNA SZEROKOŚĆ */
       border-radius: 10px;
       overflow: hidden;
       box-shadow: 0 0 25px rgba(0,0,0,0.5);
@@ -72,9 +72,10 @@
     .tabela-premium td, 
     .tabela-premium th {
       border: 1px solid rgba(255,255,255,0.1);
-      padding: 8px 12px;
+      padding: 10px 14px;    /* WIĘKSZE KOMÓRKI */
       color: #fff;
       white-space: nowrap;
+      font-size: 15px;       /* WIĘKSZA CZCIONKA */
     }
 
     .tabela-premium tr:nth-child(even) {
