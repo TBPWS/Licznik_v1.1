@@ -52,7 +52,7 @@
 
     /* KONTENER PRZEWIJANIA — POWIĘKSZONY */
     .table-scroll {
-      max-height: 800px;     /* POWIĘKSZONA WYSOKOŚĆ */
+      max-height: 800px;
       overflow-y: auto;
       overflow-x: auto;
       border-radius: 10px;
@@ -62,7 +62,7 @@
     /* TABELA PREMIUM — SZEROKA */
     .tabela-premium {
       border-collapse: collapse;
-      width: 100%;           /* PEŁNA SZEROKOŚĆ */
+      width: 100%;
       border-radius: 10px;
       overflow: hidden;
       box-shadow: 0 0 25px rgba(0,0,0,0.5);
@@ -72,10 +72,10 @@
     .tabela-premium td, 
     .tabela-premium th {
       border: 1px solid rgba(255,255,255,0.1);
-      padding: 10px 14px;    /* WIĘKSZE KOMÓRKI */
+      padding: 10px 14px;
       color: #fff;
       white-space: nowrap;
-      font-size: 15px;       /* WIĘKSZA CZCIONKA */
+      font-size: 15px;
     }
 
     .tabela-premium tr:nth-child(even) {
@@ -89,35 +89,34 @@
       background: rgba(0,0,0,0.6);
       backdrop-filter: blur(4px);
       z-index: 5;
+    }
 
-      /* Zamrożenie pierwszych 3 kolumn tylko w zakładce Podsumowanie */
-#tab_Podsumowanie table td:nth-child(1),
-#tab_Podsumowanie table th:nth-child(1) {
-  position: sticky;
-  left: 0;
-  background: rgba(0,0,0,0.6);
-  backdrop-filter: blur(4px);
-  z-index: 7;
-}
+    /* ⭐ ZAMROŻENIE PIERWSZYCH 3 KOLUMN TYLKO W "Podsumowanie" ⭐ */
+    #tab_Podsumowanie td:nth-child(1),
+    #tab_Podsumowanie th:nth-child(1) {
+      position: sticky;
+      left: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      z-index: 7;
+    }
 
-#tab_Podsumowanie table td:nth-child(2),
-#tab_Podsumowanie table th:nth-child(2) {
-  position: sticky;
-  left: 140px; /* szerokość kolumny 1 */
-  background: rgba(0,0,0,0.6);
-  backdrop-filter: blur(4px);
-  z-index: 7;
-}
+    #tab_Podsumowanie td:nth-child(2),
+    #tab_Podsumowanie th:nth-child(2) {
+      position: sticky;
+      left: 140px;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      z-index: 7;
+    }
 
-#tab_Podsumowanie table td:nth-child(3),
-#tab_Podsumowanie table th:nth-child(3) {
-  position: sticky;
-  left: 280px; /* szerokość kolumny 2 */
-  background: rgba(0,0,0,0.6);
-  backdrop-filter: blur(4px);
-  z-index: 7;
-}
-
+    #tab_Podsumowanie td:nth-child(3),
+    #tab_Podsumowanie th:nth-child(3) {
+      position: sticky;
+      left: 280px;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      z-index: 7;
     }
 
     @keyframes fadeIn {
@@ -146,7 +145,6 @@
         const container = document.getElementById("tabele");
         const tabs = document.getElementById("tabs");
 
-        /* PREMIUM GRADIENTY */
         const koloryPremium = {
           "Crypt": "linear-gradient(135deg, #1e3c72, #2a5298)",
           "Vault": "linear-gradient(135deg, #0f9b0f, #00b300)",
@@ -157,21 +155,18 @@
 
         Object.keys(allSheets).forEach(sheetName => {
 
-          /* POMIJAMY NIEPOTRZEBNE ZAKŁADKI */
           if (sheetName === "Dane") return;
           if (sheetName === "Ranking") return;
           if (sheetName === "Historia") return;
 
           const rows = allSheets[sheetName];
 
-          /* TWORZENIE PRZYCISKU ZAKŁADKI */
           const btn = document.createElement("button");
           btn.className = "tab-btn";
           btn.textContent = sheetName;
           btn.dataset.tab = sheetName;
           tabs.appendChild(btn);
 
-          /* TWORZENIE KONTENERA + TABELI */
           const wrapper = document.createElement("div");
           wrapper.className = "table-scroll hidden";
           wrapper.id = "tab_" + sheetName;
@@ -179,7 +174,6 @@
           const table = document.createElement("table");
           table.className = "tabela-premium";
 
-          /* WYBÓR GRADIENTU */
           let gradient = koloryPremium.default;
           if (sheetName.includes("Crypt")) gradient = koloryPremium.Crypt;
           if (sheetName.includes("Vault")) gradient = koloryPremium.Vault;
@@ -188,7 +182,6 @@
 
           table.style.background = gradient;
 
-          /* GENEROWANIE WIERSZY */
           rows.forEach((row, index) => {
             const tr = document.createElement("tr");
 
@@ -205,7 +198,6 @@
           container.appendChild(wrapper);
         });
 
-        /* LOGIKA PRZEŁĄCZANIA ZAKŁADEK */
         document.querySelectorAll(".tab-btn").forEach(btn => {
           btn.addEventListener("click", () => {
 
@@ -219,7 +211,6 @@
           });
         });
 
-        /* AUTOMATYCZNIE AKTYWNA PIERWSZA ZAKŁADKA */
         const firstBtn = document.querySelector(".tab-btn");
         if (firstBtn) firstBtn.click();
       })
