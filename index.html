@@ -52,14 +52,15 @@
     .table-scroll {
       max-height: 800px;
       overflow-y: auto;
-      overflow-x: auto;
+      overflow-x: auto;     /* ⭐ poziomy scroll */
+      white-space: nowrap;  /* ⭐ nie ucina kolumn */
       border-radius: 10px;
       margin-bottom: 40px;
     }
 
     .tabela-premium {
       border-collapse: collapse;
-      width: 100%;
+      width: max-content;   /* ⭐ tabela może być szersza niż ekran */
       border-radius: 10px;
       overflow: hidden;
       box-shadow: 0 0 25px rgba(0,0,0,0.5);
@@ -143,13 +144,13 @@
         ths[i].style.position = "sticky";
         ths[i].style.left = offset + "px";
         ths[i].style.zIndex = 7;
-        ths[i].style.background = "rgba(20,20,20,0.85)";
+        ths[i].style.background = "inherit"; /* ⭐ nie zasłania */
 
         table.querySelectorAll("td:nth-child(" + (i + 1) + ")").forEach(td => {
           td.style.position = "sticky";
           td.style.left = offset + "px";
           td.style.zIndex = 7;
-          td.style.background = "rgba(20,20,20,0.85)";
+          td.style.background = "inherit"; /* ⭐ nie zasłania */
         });
 
         offset += width;
@@ -231,7 +232,7 @@
               const activeTable = document.getElementById("tab_" + btn.dataset.tab);
               activeTable.classList.remove("hidden");
 
-              fixStickyColumns();
+              setTimeout(fixStickyColumns, 50); /* ⭐ poprawka */
             });
           });
 
