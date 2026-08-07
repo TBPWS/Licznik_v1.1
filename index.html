@@ -2,8 +2,7 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <title>Tabele — SAFE MODE Android</title>
+  <title>Tabele z arkusza Google — Premium Tabs</title>
 
   <style>
     body {
@@ -41,94 +40,106 @@
       font-weight: bold;
     }
 
+    .tab-btn:hover {
+      background: #333;
+    }
+
     .tab-btn.active {
       background: #444;
       border-color: #777;
     }
 
-    /* ⭐ NORMALNE TABELKI — tylko poziomy scroll */
     .table-scroll {
-      overflow-x: auto;      /* poziomy scroll */
-      overflow-y: hidden;    /* brak pionowego scrolla */
-      margin-bottom: 20px;
-      -webkit-overflow-scrolling: touch;
+      max-height: 800px;
+      overflow-y: auto;
+      overflow-x: auto;
+      border-radius: 10px;
+      margin-bottom: 40px;
     }
 
     .tabela-premium {
       border-collapse: collapse;
-      width: 140%;           /* wymusza poziomy scroll */
+      width: 100%;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.4);
+      overflow: hidden;
+      box-shadow: 0 0 25px rgba(0,0,0,0.5);
+      animation: fadeIn 0.4s ease;
     }
 
-    .tabela-premium td,
+    .tabela-premium td, 
     .tabela-premium th {
       border: 1px solid rgba(255,255,255,0.1);
-      padding: 8px 10px;
+      padding: 10px 14px;
       color: #fff;
       white-space: nowrap;
-      font-size: 14px;
-      min-width: 110px;
+      font-size: 15px;
+    }
+
+    .tabela-premium tr:nth-child(even) {
+      background: rgba(255,255,255,0.05);
     }
 
     .tabela-premium th {
       position: sticky;
       top: 0;
-      background-color: #000;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
       z-index: 5;
+    }
+
+    /* ⭐ PIERWSZE 3 KOLUMNY — STICKY, BEZ KOLORÓW ⭐ */
+    #tab_Podsumowanie td:nth-child(1),
+    #tab_Podsumowanie th:nth-child(1) {
+      position: sticky;
+      left: 0;
+      background: rgba(20,20,20,0.85);
+      z-index: 7;
+    }
+
+    #tab_Podsumowanie td:nth-child(2),
+    #tab_Podsumowanie th:nth-child(2) {
+      position: sticky;
+      left: 160px;
+      background: rgba(20,20,20,0.85);
+      z-index: 7;
+    }
+
+    #tab_Podsumowanie td:nth-child(3),
+    #tab_Podsumowanie th:nth-child(3) {
+      position: sticky;
+      left: 320px;
+      background: rgba(20,20,20,0.85);
+      z-index: 7;
+    }
+
+    /* ⭐ KOLOROWANIE POZOSTAŁYCH KOLUMN W PODSUMOWANIE ⭐ */
+    #tab_Podsumowanie td.crypt,
+    #tab_Podsumowanie th.crypt {
+      background: #1e3c72;
+    }
+
+    #tab_Podsumowanie td.vault,
+    #tab_Podsumowanie th.vault {
+      background: #0f9b0f;
+    }
+
+    #tab_Podsumowanie td.hermes,
+    #tab_Podsumowanie th.hermes {
+      background: #ff8c00;
+    }
+
+    #tab_Podsumowanie td.ancients,
+    #tab_Podsumowanie th.ancients {
+      background: #8e2de2;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .hidden {
       display: none;
-    }
-
-    /* ⭐ SAFE MODE — Podsumowanie */
-    .podsumowanie-wrapper {
-      display: flex;
-      gap: 0;
-      margin-bottom: 20px;
-    }
-
-    /* lewa tabela — zamrożone 3 kolumny */
-    .podsumowanie-left {
-      width: 330px;          /* 3 kolumny */
-      overflow-x: hidden;
-      overflow-y: hidden;    /* brak pionowego scrolla */
-    }
-
-    /* prawa tabela — reszta kolumn */
-    .podsumowanie-right {
-      flex: 1;
-      overflow-x: auto;      /* poziomy scroll */
-      overflow-y: hidden;    /* brak pionowego scrolla */
-      -webkit-overflow-scrolling: touch;
-    }
-
-    .podsumowanie-left .tabela-premium,
-    .podsumowanie-right .tabela-premium {
-      width: auto;
-      box-shadow: none;
-    }
-
-    /* kolorowanie kolumn po prawej */
-    .podsumowanie-right td.crypt,
-    .podsumowanie-right th.crypt {
-      background-color: #1e3c72 !important;
-    }
-
-    .podsumowanie-right td.vault,
-    .podsumowanie-right th.vault {
-      background-color: #0f9b0f !important;
-    }
-
-    .podsumowanie-right td.hermes,
-    .podsumowanie-right th.hermes {
-      background-color: #ff8c00 !important;
-    }
-
-    .podsumowanie-right td.ancients,
-    .podsumowanie-right th.ancients {
-      background-color: #8e2de2 !important;
     }
   </style>
 </head>
@@ -138,6 +149,7 @@
   <input type="text" id="dataDo" placeholder="do">
 
   <div class="tabs" id="tabs"></div>
+
   <div id="tabele"></div>
 
   <script>
@@ -147,10 +159,17 @@
         const container = document.getElementById("tabele");
         const tabs = document.getElementById("tabs");
 
+        const koloryPremium = {
+          "Crypt": "crypt",
+          "Vault": "vault",
+          "Hermes": "hermes",
+          "Ancients": "ancients"
+        };
+
         Object.keys(allSheets).forEach(sheetName => {
 
-          if (sheetName.toLowerCase().includes("ranking")) return;
           if (sheetName === "Dane") return;
+          if (sheetName === "Historia") return;
 
           const rows = allSheets[sheetName];
 
@@ -160,100 +179,59 @@
           btn.dataset.tab = sheetName;
           tabs.appendChild(btn);
 
-          let wrapper;
+          const wrapper = document.createElement("div");
+          wrapper.className = "table-scroll hidden";
+          wrapper.id = "tab_" + sheetName;
 
-          /* ⭐ SAFE MODE — Podsumowanie */
-          if (sheetName === "Podsumowanie") {
+          const table = document.createElement("table");
+          table.className = "tabela-premium";
 
-            wrapper = document.createElement("div");
-            wrapper.className = "podsumowanie-wrapper hidden";
-            wrapper.id = "tab_" + sheetName;
+          rows.forEach((row, index) => {
+            const tr = document.createElement("tr");
 
-            const leftScroll = document.createElement("div");
-            leftScroll.className = "podsumowanie-left";
+            row.forEach((cell, colIndex) => {
+              const td = document.createElement(index === 0 ? "th" : "td");
+              td.textContent = cell;
 
-            const rightScroll = document.createElement("div");
-            rightScroll.className = "podsumowanie-right";
+              /* ⭐ KOLOROWANIE KOLUMN W PODSUMOWANIE ⭐ */
+              if (sheetName === "Podsumowanie" && colIndex >= 3) {
+                const header = rows[0][colIndex];
 
-            const leftTable = document.createElement("table");
-            leftTable.className = "tabela-premium";
+                if (header.includes("Crypt")) td.classList.add("crypt");
+                if (header.includes("Vault")) td.classList.add("vault");
+                if (header.includes("Hermes")) td.classList.add("hermes");
+                if (header.includes("Ancients")) td.classList.add("ancients");
+              }
 
-            const rightTable = document.createElement("table");
-            rightTable.className = "tabela-premium";
-
-            rows.forEach((row, rowIndex) => {
-              const trLeft = document.createElement("tr");
-              const trRight = document.createElement("tr");
-
-              row.forEach((cell, colIndex) => {
-                const tag = rowIndex === 0 ? "th" : "td";
-                const td = document.createElement(tag);
-                td.textContent = cell;
-
-                if (colIndex < 3) {
-                  trLeft.appendChild(td);
-                } else {
-                  const header = String(rows[0][colIndex]).toLowerCase();
-                  if (header.includes("crypt")) td.classList.add("crypt");
-                  else if (header.includes("vault")) td.classList.add("vault");
-                  else if (header.includes("hermes")) td.classList.add("hermes");
-                  else if (header.includes("ancients")) td.classList.add("ancients");
-
-                  trRight.appendChild(td);
-                }
-              });
-
-              leftTable.appendChild(trLeft);
-              rightTable.appendChild(trRight);
+              tr.appendChild(td);
             });
 
-            leftScroll.appendChild(leftTable);
-            rightScroll.appendChild(rightTable);
+            table.appendChild(tr);
+          });
 
-            wrapper.appendChild(leftScroll);
-            wrapper.appendChild(rightScroll);
-            container.appendChild(wrapper);
-
-          } else {
-            /* ⭐ NORMALNE TABELKI */
-            wrapper = document.createElement("div");
-            wrapper.className = "table-scroll hidden";
-            wrapper.id = "tab_" + sheetName;
-
-            const table = document.createElement("table");
-            table.className = "tabela-premium";
-
-            rows.forEach((row, index) => {
-              const tr = document.createElement("tr");
-              row.forEach(cell => {
-                const td = document.createElement(index === 0 ? "th" : "td");
-                td.textContent = cell;
-                tr.appendChild(td);
-              });
-              table.appendChild(tr);
-            });
-
-            wrapper.appendChild(table);
-            container.appendChild(wrapper);
-          }
+          wrapper.appendChild(table);
+          container.appendChild(wrapper);
         });
 
-        /* przełączanie zakładek */
         document.querySelectorAll(".tab-btn").forEach(btn => {
           btn.addEventListener("click", () => {
+
             document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
 
-            document.querySelectorAll(".table-scroll, .podsumowanie-wrapper")
-              .forEach(t => t.classList.add("hidden"));
+            document.querySelectorAll(".table-scroll").forEach(t => t.classList.add("hidden"));
 
             const activeTable = document.getElementById("tab_" + btn.dataset.tab);
-            if (activeTable) activeTable.classList.remove("hidden");
+            activeTable.classList.remove("hidden");
           });
         });
 
         const firstBtn = document.querySelector(".tab-btn");
         if (firstBtn) firstBtn.click();
+      })
+      .catch(err => {
+        document.body.innerHTML += "<p>Błąd wczytywania danych.</p>";
+        console.error(err);
       });
   </script>
 
