@@ -52,15 +52,15 @@
     .table-scroll {
       max-height: 800px;
       overflow-y: auto;
-      overflow-x: auto;     /* ⭐ poziomy scroll */
-      white-space: nowrap;  /* ⭐ nie ucina kolumn */
+      overflow-x: auto;
+      white-space: nowrap;
       border-radius: 10px;
       margin-bottom: 40px;
     }
 
     .tabela-premium {
       border-collapse: collapse;
-      width: max-content;   /* ⭐ tabela może być szersza niż ekran */
+      width: max-content;
       border-radius: 10px;
       overflow: hidden;
       box-shadow: 0 0 25px rgba(0,0,0,0.5);
@@ -88,7 +88,7 @@
       z-index: 5;
     }
 
-    /* Kolory premium */
+    /* Kolory premium dla Podsumowanie */
     #tab_Podsumowanie td.crypt,
     #tab_Podsumowanie th.crypt {
       background: #1e3c72;
@@ -130,34 +130,6 @@
 
   <script>
 
-    /* ⭐ Dynamiczne sticky pierwszych 3 kolumn ⭐ */
-    function fixStickyColumns() {
-      const table = document.querySelector("#tab_Podsumowanie table");
-      if (!table) return;
-
-      const ths = table.querySelectorAll("th");
-      let offset = 0;
-
-      for (let i = 0; i < 3; i++) {
-        const width = ths[i].offsetWidth;
-
-        ths[i].style.position = "sticky";
-        ths[i].style.left = offset + "px";
-        ths[i].style.zIndex = 7;
-        ths[i].style.background = "inherit"; /* ⭐ nie zasłania */
-
-        table.querySelectorAll("td:nth-child(" + (i + 1) + ")").forEach(td => {
-          td.style.position = "sticky";
-          td.style.left = offset + "px";
-          td.style.zIndex = 7;
-          td.style.background = "inherit"; /* ⭐ nie zasłania */
-        });
-
-        offset += width;
-      }
-    }
-
-    /* ⭐ Główna funkcja ładowania tabel ⭐ */
     function loadTables() {
       fetch("https://raw.githubusercontent.com/TBPWS/Licznik_v1.1/main/data.json")
         .then(r => r.json())
@@ -231,8 +203,6 @@
 
               const activeTable = document.getElementById("tab_" + btn.dataset.tab);
               activeTable.classList.remove("hidden");
-
-              setTimeout(fixStickyColumns, 50); /* ⭐ poprawka */
             });
           });
 
@@ -245,7 +215,6 @@
         });
     }
 
-    /* ⭐ Start + automatyczne odświeżanie co 30 sekund ⭐ */
     loadTables();
     setInterval(loadTables, 30000);
 
