@@ -87,32 +87,7 @@
       z-index: 5;
     }
 
-    /* ⭐ PIERWSZE 3 KOLUMNY — STICKY, BEZ KOLORÓW ⭐ */
-    #tab_Podsumowanie td:nth-child(1),
-    #tab_Podsumowanie th:nth-child(1) {
-      position: sticky;
-      left: 0;
-      background: rgba(20,20,20,0.85);
-      z-index: 7;
-    }
-
-    #tab_Podsumowanie td:nth-child(2),
-    #tab_Podsumowanie th:nth-child(2) {
-      position: sticky;
-      left: 160px;
-      background: rgba(20,20,20,0.85);
-      z-index: 7;
-    }
-
-    #tab_Podsumowanie td:nth-child(3),
-    #tab_Podsumowanie th:nth-child(3) {
-      position: sticky;
-      left: 320px;
-      background: rgba(20,20,20,0.85);
-      z-index: 7;
-    }
-
-    /* ⭐ KOLOROWANIE POZOSTAŁYCH KOLUMN W PODSUMOWANIE ⭐ */
+    /* Kolory premium */
     #tab_Podsumowanie td.crypt,
     #tab_Podsumowanie th.crypt {
       background: #1e3c72;
@@ -153,86 +128,126 @@
   <div id="tabele"></div>
 
   <script>
-    fetch("https://raw.githubusercontent.com/TBPWS/Licznik_v1.1/main/data.json")
-      .then(r => r.json())
-      .then(allSheets => {
-        const container = document.getElementById("tabele");
-        const tabs = document.getElementById("tabs");
 
-        const koloryPremium = {
-          "Crypt": "crypt",
-          "Vault": "vault",
-          "Hermes": "hermes",
-          "Ancients": "ancients"
-        };
+    /* ⭐ Dynamiczne sticky pierwszych 3 kolumn ⭐ */
+    function fixStickyColumns() {
+      const table = document.querySelector("#tab_Podsumowanie table");
+      if (!table) return;
 
-        Object.keys(allSheets).forEach(sheetName => {
+      const ths = table.querySelectorAll("th");
+      let offset = 0;
 
-          if (sheetName === "Dane") return;
-          if (sheetName === "Ranking Historia") return;
+      for (let i = 0; i < 3; i++) {
+        const width = ths[i].offsetWidth;
 
-          const rows = allSheets[sheetName];
+        ths[i].style.position = "sticky";
+        ths[i].style.left = offset + "px";
+        ths[i].style.zIndex = 7;
+        ths[i].style.background = "rgba(20,20,20,0.85)";
 
-          const btn = document.createElement("button");
-          btn.className = "tab-btn";
-          btn.textContent = sheetName;
-          btn.dataset.tab = sheetName;
-          tabs.appendChild(btn);
+        table.querySelectorAll("td:nth-child(" + (i + 1) + ")").forEach(td => {
+          td.style.position = "sticky";
+          td.style.left = offset + "px";
+          td.style.zIndex = 7;
+          td.style.background = "rgba(20,20,20,0.85)";
+        });
 
-          const wrapper = document.createElement("div");
-          wrapper.className = "table-scroll hidden";
-          wrapper.id = "tab_" + sheetName;
+        offset += width;
+      }
+    }
 
-          const table = document.createElement("table");
-          table.className = "tabela-premium";
+    /* ⭐ Główna funkcja ładowania tabel ⭐ */
+    function loadTables() {
+      fetch("https://raw.githubusercontent.com/TBPWS/Licznik_v1.1/main/data.json")
+        .then(r => r.json())
+        .then(allSheets => {
 
-          rows.forEach((row, index) => {
-            const tr = document.createElement("tr");
+          const container = document.getElementById("tabele");
+          const tabs = document.getElementById("tabs");
 
-            row.forEach((cell, colIndex) => {
-              const td = document.createElement(index === 0 ? "th" : "td");
-              td.textContent = cell;
+          container.innerHTML = "";
+          tabs.innerHTML = "";
 
-              /* ⭐ KOLOROWANIE KOLUMN W PODSUMOWANIE ⭐ */
-              if (sheetName === "Podsumowanie" && colIndex >= 3) {
-                const header = rows[0][colIndex];
+          const koloryPremium = {
+            "Crypt": "crypt",
+            "Vault": "vault",
+            "Hermes": "hermes",
+            "Ancients": "ancients"
+          };
 
-                if (header.includes("Crypt")) td.classList.add("crypt");
-                if (header.includes("Vault")) td.classList.add("vault");
-                if (header.includes("Hermes")) td.classList.add("hermes");
-                if (header.includes("Ancients")) td.classList.add("ancients");
-              }
+          Object.keys(allSheets).forEach(sheetName => {
 
-              tr.appendChild(td);
+            if (sheetName === "Dane") return;
+            if (sheetName === "Ranking Historia") return;
+
+            const rows = allSheets[sheetName];
+
+            const btn = document.createElement("button");
+            btn.className = "tab-btn";
+            btn.textContent = sheetName;
+            btn.dataset.tab = sheetName;
+            tabs.appendChild(btn);
+
+            const wrapper = document.createElement("div");
+            wrapper.className = "table-scroll hidden";
+            wrapper.id = "tab_" + sheetName;
+
+            const table = document.createElement("table");
+            table.className = "tabela-premium";
+
+            rows.forEach((row, index) => {
+              const tr = document.createElement("tr");
+
+              row.forEach((cell, colIndex) => {
+                const td = document.createElement(index === 0 ? "th" : "td");
+                td.textContent = cell;
+
+                if (sheetName === "Podsumowanie" && colIndex >= 3) {
+                  const header = rows[0][colIndex];
+
+                  if (header.includes("Crypt")) td.classList.add("crypt");
+                  if (header.includes("Vault")) td.classList.add("vault");
+                  if (header.includes("Hermes")) td.classList.add("hermes");
+                  if (header.includes("Ancients")) td.classList.add("ancients");
+                }
+
+                tr.appendChild(td);
+              });
+
+              table.appendChild(tr);
             });
 
-            table.appendChild(tr);
+            wrapper.appendChild(table);
+            container.appendChild(wrapper);
           });
 
-          wrapper.appendChild(table);
-          container.appendChild(wrapper);
-        });
+          document.querySelectorAll(".tab-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+              document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+              btn.classList.add("active");
 
-        document.querySelectorAll(".tab-btn").forEach(btn => {
-          btn.addEventListener("click", () => {
+              document.querySelectorAll(".table-scroll").forEach(t => t.classList.add("hidden"));
 
-            document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-            btn.classList.add("active");
+              const activeTable = document.getElementById("tab_" + btn.dataset.tab);
+              activeTable.classList.remove("hidden");
 
-            document.querySelectorAll(".table-scroll").forEach(t => t.classList.add("hidden"));
-
-            const activeTable = document.getElementById("tab_" + btn.dataset.tab);
-            activeTable.classList.remove("hidden");
+              fixStickyColumns();
+            });
           });
-        });
 
-        const firstBtn = document.querySelector(".tab-btn");
-        if (firstBtn) firstBtn.click();
-      })
-      .catch(err => {
-        document.body.innerHTML += "<p>Błąd wczytywania danych.</p>";
-        console.error(err);
-      });
+          const firstBtn = document.querySelector(".tab-btn");
+          if (firstBtn) firstBtn.click();
+        })
+        .catch(err => {
+          document.body.innerHTML += "<p>Błąd wczytywania danych.</p>";
+          console.error(err);
+        });
+    }
+
+    /* ⭐ Start + automatyczne odświeżanie co 30 sekund ⭐ */
+    loadTables();
+    setInterval(loadTables, 30000);
+
   </script>
 
 </body>
