@@ -67,20 +67,22 @@
       animation: fadeIn 0.4s ease;
     }
 
-    .tabela-premium td, 
+    /* ⭐ Stała szerokość kolumn */
+    .tabela-premium td,
     .tabela-premium th {
-      border: 1px solid rgba(255,255,255,0.1);
+      width: 120px;
+      max-width: 120px;
+      overflow: hidden;
+      text-overflow: ellipsis;
       padding: 10px 14px;
       color: #fff;
-      white-space: nowrap;
-      font-size: 15px;
+      border: 1px solid rgba(255,255,255,0.1);
     }
 
-    .tabela-premium tr:nth-child(even) {
-      background: rgba(255,255,255,0.05);
-    }
-
+    /* ⭐ Nagłówki zawijane */
     .tabela-premium th {
+      white-space: normal;
+      word-break: break-word;
       position: sticky;
       top: 0;
       background: rgba(0,0,0,0.6);
@@ -88,7 +90,16 @@
       z-index: 5;
     }
 
-    /* Kolory premium dla Podsumowanie */
+    /* ⭐ Dane nie zawijają się */
+    .tabela-premium td {
+      white-space: nowrap;
+    }
+
+    .tabela-premium tr:nth-child(even) {
+      background: rgba(255,255,255,0.05);
+    }
+
+    /* ⭐ Kolory premium */
     #tab_Podsumowanie td.crypt,
     #tab_Podsumowanie th.crypt {
       background: #1e3c72;
@@ -130,6 +141,36 @@
 
   <script>
 
+    /* ⭐ Sticky pierwszych 3 kolumn + tooltipy */
+    function fixStickyColumns() {
+      const table = document.querySelector("#tab_Podsumowanie table");
+      if (!table) return;
+
+      const ths = table.querySelectorAll("th");
+      let offset = 0;
+
+      for (let i = 0; i < 3; i++) {
+        const width = ths[i].offsetWidth;
+
+        ths[i].style.position = "sticky";
+        ths[i].style.left = offset + "px";
+        ths[i].style.zIndex = 7;
+        ths[i].style.background = "rgba(0,0,0,0.4)";
+        ths[i].title = ths[i].textContent; /* ⭐ tooltip */
+
+        table.querySelectorAll("td:nth-child(" + (i + 1) + ")").forEach(td => {
+          td.style.position = "sticky";
+          td.style.left = offset + "px";
+          td.style.zIndex = 7;
+          td.style.background = "rgba(0,0,0,0.4)";
+          td.title = td.textContent; /* ⭐ tooltip */
+        });
+
+        offset += width;
+      }
+    }
+
+    /* ⭐ Główna funkcja ładowania tabel */
     function loadTables() {
       fetch("https://raw.githubusercontent.com/TBPWS/Licznik_v1.1/main/data.json")
         .then(r => r.json())
@@ -174,6 +215,7 @@
               row.forEach((cell, colIndex) => {
                 const td = document.createElement(index === 0 ? "th" : "td");
                 td.textContent = cell;
+                td.title = cell; /* ⭐ tooltip */
 
                 if (sheetName === "Podsumowanie" && colIndex >= 3) {
                   const header = rows[0][colIndex];
@@ -203,6 +245,8 @@
 
               const activeTable = document.getElementById("tab_" + btn.dataset.tab);
               activeTable.classList.remove("hidden");
+
+              setTimeout(fixStickyColumns, 50);
             });
           });
 
@@ -215,8 +259,9 @@
         });
     }
 
+    /* ⭐ Start + odświeżanie co 30 sekund */
     loadTables();
-    setInterval(loadTables, 600000);
+    setInterval(loadTables, 30000);
 
   </script>
 
