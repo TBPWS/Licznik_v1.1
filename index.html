@@ -3,32 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mój Arkusz</title>
+    <title>Mój Arkusz Google</title>
     <style>
-        /* Sztywne dopasowanie okna do ekranu urządzenia */
         html, body {
             margin: 0;
             padding: 0;
             height: 100%;
             width: 100%;
             overflow: hidden;
-            background-color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f8f9fa;
         }
-        /* Ten styl zmusi Google do używania własnych suwaków i naprawi blokadę wierszy */
+        /* Górny pasek narzędziowy */
+        .toolbar {
+            height: 50px;
+            background-color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            z-index: 10;
+            position: relative;
+            box-sizing: border-box;
+        }
+        /* Przycisk otwierający pełną wersję */
+        .btn {
+            background-color: #1a73e8;
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+        .btn:hover {
+            background-color: #1557b0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        /* Idealnie dopasowana ramka pod przyciskiem */
         iframe {
             position: absolute;
-            top: 0;
+            top: 50px;
             left: 0;
             width: 100%;
-            height: 100%;
+            height: calc(100% - 50px);
             border: none;
         }
     </style>
 </head>
 <body>
 
-    1OmkKHiEm0jA9nhygs3UV8yOkhDYt3EntSV4YZf-zf8U/edit?rm=minimal
-    <iframe src="https://google.com"></iframe>
+    <div class="toolbar">
+        
+        <a href="1OmkKHiEm0jA9nhygs3UV8yOkhDYt3EntSV4YZf-zf8U" target="_blank" class="btn">Otwórz pełną wersję (z blokadą wierszy)</a>
+    </div>
+
+    <iframe src="1OmkKHiEm0jA9nhygs3UV8yOkhDYt3EntSV4YZf-zf8U"></iframe>
 
 </body>
 </html>
