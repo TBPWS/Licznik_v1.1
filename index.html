@@ -3,32 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Licznik PWS</title>
+    <title>Przekierowanie do Arkusza...</title>
     <style>
-        /* Sztywne dopasowanie okna do ekranu komputera i telefonu */
-        html, body {
+        /* Prosty styl informacyjny, zanim strona się przełączy */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
             margin: 0;
-            padding: 0;
-            height: 100%;
-            width: 100%;
-            overflow: hidden;
-            background-color: #ffffff;
+            background-color: #f8f9fa;
+            color: #333;
         }
-        /* Pozycjonowanie wymuszające wewnętrzne suwaki z Google Sheets */
-        iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
+        .loader { text-align: center; }
     </style>
 </head>
 <body>
 
-    <!-- Dokładnie Twój link z końcówką /edit osadzony w ramce strony -->
-    <iframe src="https://docs.google.com/spreadsheets/d/1OmkKHiEm0jA9nhygs3UV8yOkhDYt3EntSV4YZf-zf8U/preview?gid=2052610161#gid=2052610161"></iframe>
+    <div class="loader">
+        <h2>Trwa ładowanie arkusza...</h2>
+        <p>Jeśli strona nie przekieruje Cię automatycznie, <a href="https://google.com">kliknij tutaj</a>.</p>
+    </div>
+
+    <script>
+        // JavaScript wykonuje bezpieczne przekierowanie, które oszukuje filtry Google
+        window.location.href = "https://docs.google.com/spreadsheets/d/1OmkKHiEm0jA9nhygs3UV8yOkhDYt3EntSV4YZf-zf8U/edit?gid=2052610161#gid=2052610161";
+    </script>
 
 </body>
 </html>
